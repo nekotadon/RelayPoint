@@ -26,6 +26,11 @@
 ## 動作確認環境
 Microsoft Windows10 x64 + .NET Framework 4.8
 
+## ライセンス
+
+This software is released under the MIT License.  
+詳細については、[LICENSE](./LICENSE) ファイルを参照してください。
+
 ## その他
 
 * [DropPoint](https://github.com/GameGodS3/DropPoint)に感銘を受けて、自分でも作れないかと思い作成してみました。  
