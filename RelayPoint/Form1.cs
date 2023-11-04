@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
+using TextLib;
 
 namespace RelayPoint
 {
@@ -21,7 +22,7 @@ namespace RelayPoint
         string appname;
 
         //設定ファイル
-        TextLib.IniFile pfini = null;
+        IniFile inifile = new IniFile();
 
         public Form1()
         {
@@ -45,17 +46,14 @@ namespace RelayPoint
             read_folder_ini();
 
             //設定ファイルの読み込み
-            pfini = new TextLib.IniFile(appfolder + @"\" + appname + ".ini");
-            pfini.load();
-            this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked = pfini.getvalue("Setting", "mousemove", 1, 0, 1) == 1;
-            this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked = pfini.getvalue("Setting", "fullpath", 0, 0, 1) == 1;
-            this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked = pfini.getvalue("Setting", "tooltip", 0, 0, 1) == 1;
-            int bootpos = pfini.getvalue("Setting", "position", 0, 0, 3);
-            int bootposTop = pfini.getvalue("Setting", "Top", 0);
-            int bootposLeft = pfini.getvalue("Setting", "Left", 0);
-            int bootposFixTop = pfini.getvalue("Setting", "FixTop", 0);
-            int bootposFixLeft = pfini.getvalue("Setting", "FixLeft", 0);
-            pfini.WriteIniFile();
+            this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "mousemove", true, true);
+            this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "fullpath", false, true);
+            this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "tooltip", false, true);
+            int bootpos = inifile.GetKeyValueInt("Setting", "position", 0, 0, 3, true);
+            int bootposTop = inifile.GetKeyValueInt("Setting", "Top", 0, true);
+            int bootposLeft = inifile.GetKeyValueInt("Setting", "Left", 0, true);
+            int bootposFixTop = inifile.GetKeyValueInt("Setting", "FixTop", 0, true);
+            int bootposFixLeft = inifile.GetKeyValueInt("Setting", "FixLeft", 0, true);
 
             //起動時位置
             this.StartPosition = FormStartPosition.Manual;
@@ -313,7 +311,7 @@ namespace RelayPoint
                     }
 
                     //フォルダリスト更新
-                    TextLib.TextFile.Write(folder_ini, string.Join(System.Environment.NewLine, folders), false, TextLib.TextFile.encoding_utf8);
+                    TextFile.Write(folder_ini, string.Join(System.Environment.NewLine, folders), false, EncodeLib.UTF8);
                 }
             }
         }
@@ -440,7 +438,7 @@ namespace RelayPoint
             {
                 if (!File.Exists(folder_ini))
                 {
-                    TextLib.TextFile.Write(folder_ini, "", false, TextLib.TextFile.encoding_utf8);
+                    TextFile.Write(folder_ini, "", false, EncodeLib.UTF8);
                 }
 
                 if (File.Exists(folder_ini))
@@ -679,7 +677,7 @@ namespace RelayPoint
         {
             folders = new List<string>();
 
-            string readall = TextLib.TextFile.Read(folder_ini);
+            string readall = TextFile.Read(folder_ini);
             foreach (string str in readall.Replace(System.Environment.NewLine, "\n").Split('\n'))
             {
                 string folder = str;
@@ -695,7 +693,7 @@ namespace RelayPoint
                     folders.Add(folder);
                 }
             }
-            TextLib.TextFile.Write(folder_ini, string.Join(System.Environment.NewLine, folders), false, TextLib.TextFile.encoding_utf8);
+            TextFile.Write(folder_ini, string.Join(System.Environment.NewLine, folders), false, EncodeLib.UTF8);
         }
 
         //設定
@@ -717,15 +715,13 @@ namespace RelayPoint
         private void タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked = !this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked;
-            pfini.setvalue("Setting", "mousemove", this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked ? "1" : "0");
-            pfini.WriteIniFile();
+            inifile.SetKeyValueBool("Setting", "mousemove", this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked);
         }
 
         private void フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked = !this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked;
-            pfini.setvalue("Setting", "fullpath", this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked ? "1" : "0");
-            pfini.WriteIniFile();
+            inifile.SetKeyValueBool("Setting", "fullpath", this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked);
         }
 
         private void BootPosToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -754,26 +750,26 @@ namespace RelayPoint
             if (this.固定ToolStripMenuItem.Checked)
             {
                 idx = 3;
-                pfini.setvalue("Setting", "FixTop", this.Top.ToString());
-                pfini.setvalue("Setting", "FixLeft", this.Left.ToString());
+                inifile.SetKeyValueInt("Setting", "FixTop", Top);
+                inifile.SetKeyValueInt("Setting", "FixLeft", Left);
                 MessageBox.Show("現在位置を保存しました。");
             }
-            pfini.setvalue("Setting", "position", idx.ToString());
-            pfini.WriteIniFile();
+            inifile.SetKeyValueInt("Setting", "position", idx);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            pfini.setvalue("Setting", "Top", this.Top.ToString());
-            pfini.setvalue("Setting", "Left", this.Left.ToString());
-            pfini.WriteIniFile();
+            if (Top >= 0 && Left >= 0)
+            {
+                inifile.SetKeyValueInt("Setting", "Top", Top);
+                inifile.SetKeyValueInt("Setting", "Left", Left);
+            }
         }
 
         private void ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked = !this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked;
-            pfini.setvalue("Setting", "tooltip", this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked ? "1" : "0");
-            pfini.WriteIniFile();
+            inifile.SetKeyValueBool("Setting", "tooltip", this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked);
 
             if (this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked)
             {
