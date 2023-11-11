@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label_relaypoint = new System.Windows.Forms.Label();
-            this.label_open = new System.Windows.Forms.Label();
-            this.pictureBox_setting = new System.Windows.Forms.PictureBox();
+            this.labelRelaypoint = new System.Windows.Forms.Label();
+            this.labelFolderOpen = new System.Windows.Forms.Label();
+            this.pictureBoxSetting = new System.Windows.Forms.PictureBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,40 +43,40 @@
             this.固定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_setting)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSetting)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label_relaypoint
+            // labelRelaypoint
             // 
-            this.label_relaypoint.BackColor = System.Drawing.Color.PaleTurquoise;
-            this.label_relaypoint.Location = new System.Drawing.Point(2, 2);
-            this.label_relaypoint.Name = "label_relaypoint";
-            this.label_relaypoint.Size = new System.Drawing.Size(120, 120);
-            this.label_relaypoint.TabIndex = 0;
-            this.label_relaypoint.Text = "Drop here\r\n&&\r\nDrag out";
-            this.label_relaypoint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelRelaypoint.BackColor = System.Drawing.Color.PaleTurquoise;
+            this.labelRelaypoint.Location = new System.Drawing.Point(2, 2);
+            this.labelRelaypoint.Name = "labelRelaypoint";
+            this.labelRelaypoint.Size = new System.Drawing.Size(120, 120);
+            this.labelRelaypoint.TabIndex = 0;
+            this.labelRelaypoint.Text = "Drop here\r\n&&\r\nDrag out";
+            this.labelRelaypoint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label_open
+            // labelFolderOpen
             // 
-            this.label_open.BackColor = System.Drawing.SystemColors.Window;
-            this.label_open.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label_open.Location = new System.Drawing.Point(2, 124);
-            this.label_open.Name = "label_open";
-            this.label_open.Size = new System.Drawing.Size(98, 20);
-            this.label_open.TabIndex = 0;
-            this.label_open.Text = "フォルダを開く";
-            this.label_open.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label_open, "ドラッグ＆ドロップで登録");
+            this.labelFolderOpen.BackColor = System.Drawing.SystemColors.Window;
+            this.labelFolderOpen.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelFolderOpen.Location = new System.Drawing.Point(2, 124);
+            this.labelFolderOpen.Name = "labelFolderOpen";
+            this.labelFolderOpen.Size = new System.Drawing.Size(98, 20);
+            this.labelFolderOpen.TabIndex = 0;
+            this.labelFolderOpen.Text = "フォルダを開く";
+            this.labelFolderOpen.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.labelFolderOpen, "ドラッグ＆ドロップで登録");
             // 
-            // pictureBox_setting
+            // pictureBoxSetting
             // 
-            this.pictureBox_setting.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pictureBox_setting.Location = new System.Drawing.Point(102, 124);
-            this.pictureBox_setting.Name = "pictureBox_setting";
-            this.pictureBox_setting.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox_setting.TabIndex = 1;
-            this.pictureBox_setting.TabStop = false;
+            this.pictureBoxSetting.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBoxSetting.Location = new System.Drawing.Point(102, 124);
+            this.pictureBoxSetting.Name = "pictureBoxSetting";
+            this.pictureBoxSetting.Size = new System.Drawing.Size(20, 20);
+            this.pictureBoxSetting.TabIndex = 1;
+            this.pictureBoxSetting.TabStop = false;
             // 
             // contextMenuStrip1
             // 
@@ -119,28 +119,28 @@
             this.マウスカーソルの近くToolStripMenuItem.Name = "マウスカーソルの近くToolStripMenuItem";
             this.マウスカーソルの近くToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.マウスカーソルの近くToolStripMenuItem.Text = "マウスカーソルの近く";
-            this.マウスカーソルの近くToolStripMenuItem.Click += new System.EventHandler(this.BootPosToolStripMenuItem_Click);
+            this.マウスカーソルの近くToolStripMenuItem.Click += new System.EventHandler(this.bootPositionToolStripMenuItem_Click);
             // 
             // マウスカーソルの位置ToolStripMenuItem
             // 
             this.マウスカーソルの位置ToolStripMenuItem.Name = "マウスカーソルの位置ToolStripMenuItem";
             this.マウスカーソルの位置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.マウスカーソルの位置ToolStripMenuItem.Text = "マウスカーソルの位置";
-            this.マウスカーソルの位置ToolStripMenuItem.Click += new System.EventHandler(this.BootPosToolStripMenuItem_Click);
+            this.マウスカーソルの位置ToolStripMenuItem.Click += new System.EventHandler(this.bootPositionToolStripMenuItem_Click);
             // 
             // 前回終了位置ToolStripMenuItem
             // 
             this.前回終了位置ToolStripMenuItem.Name = "前回終了位置ToolStripMenuItem";
             this.前回終了位置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.前回終了位置ToolStripMenuItem.Text = "前回終了位置";
-            this.前回終了位置ToolStripMenuItem.Click += new System.EventHandler(this.BootPosToolStripMenuItem_Click);
+            this.前回終了位置ToolStripMenuItem.Click += new System.EventHandler(this.bootPositionToolStripMenuItem_Click);
             // 
             // 固定ToolStripMenuItem
             // 
             this.固定ToolStripMenuItem.Name = "固定ToolStripMenuItem";
             this.固定ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.固定ToolStripMenuItem.Text = "固定";
-            this.固定ToolStripMenuItem.Click += new System.EventHandler(this.BootPosToolStripMenuItem_Click);
+            this.固定ToolStripMenuItem.Click += new System.EventHandler(this.bootPositionToolStripMenuItem_Click);
             // 
             // ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem
             // 
@@ -161,22 +161,22 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(124, 146);
-            this.Controls.Add(this.pictureBox_setting);
-            this.Controls.Add(this.label_open);
-            this.Controls.Add(this.label_relaypoint);
+            this.Controls.Add(this.pictureBoxSetting);
+            this.Controls.Add(this.labelFolderOpen);
+            this.Controls.Add(this.labelRelaypoint);
             this.Name = "Form1";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_setting)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSetting)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.Label label_relaypoint;
-        private System.Windows.Forms.Label label_open;
-        private System.Windows.Forms.PictureBox pictureBox_setting;
+        private System.Windows.Forms.Label labelRelaypoint;
+        private System.Windows.Forms.Label labelFolderOpen;
+        private System.Windows.Forms.PictureBox pictureBoxSetting;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem;

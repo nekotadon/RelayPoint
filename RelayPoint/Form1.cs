@@ -1,8 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using TextLib;
 
 namespace RelayPoint
@@ -10,16 +10,10 @@ namespace RelayPoint
     public partial class Form1 : Form
     {
         //ファイルリスト
-        List<string> files_RelayPoint = new List<string>();
-
+        private List<string> fileLists = new List<string>();
         //フォルダリスト
-        List<string> folders = new List<string>();
-        string folder_ini;
-
-        //ファイルパス
-        string apppath;
-        string appfolder;
-        string appname;
+        private List<string> folderLists = new List<string>();
+        private string folderIniFile;
 
         //設定ファイル
         IniFile inifile = new IniFile();
@@ -29,117 +23,117 @@ namespace RelayPoint
             InitializeComponent();
 
             //フォーム
-            this.TopMost = true;
-            this.ShowInTaskbar = false;
-            this.Icon = Properties.Resources.app;
-            this.BackColor = SystemColors.Window;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Text = "RelayPoint";
+            TopMost = true;
+            ShowInTaskbar = false;
+            Icon = Properties.Resources.app;
+            BackColor = SystemColors.Window;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Text = "RelayPoint";
 
             //フォルダリストの読み込み
-            apppath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            appfolder = Path.GetDirectoryName(apppath);
-            appname = Path.GetFileNameWithoutExtension(apppath);
-            folder_ini = appfolder + @"\folder.ini";
-            read_folder_ini();
+            folderIniFile = AppInfo.DirectoryYen + "folder.ini";
+            ReadFoloderIni();
 
             //設定ファイルの読み込み
-            this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "mousemove", true, true);
-            this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "fullpath", false, true);
-            this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "tooltip", false, true);
-            int bootpos = inifile.GetKeyValueInt("Setting", "position", 0, 0, 3, true);
-            int bootposTop = inifile.GetKeyValueInt("Setting", "Top", 0, true);
-            int bootposLeft = inifile.GetKeyValueInt("Setting", "Left", 0, true);
-            int bootposFixTop = inifile.GetKeyValueInt("Setting", "FixTop", 0, true);
-            int bootposFixLeft = inifile.GetKeyValueInt("Setting", "FixLeft", 0, true);
+            タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "mousemove", true, true);
+            フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "fullpath", false, true);
+            ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked = inifile.GetKeyValueBool("Setting", "tooltip", false, true);
+            int bootPosition = inifile.GetKeyValueInt("Setting", "position", 0, 0, 3, true);
+            int bootPositionTop = inifile.GetKeyValueInt("Setting", "Top", 0, true);
+            int bootPositionLeft = inifile.GetKeyValueInt("Setting", "Left", 0, true);
+            int bootPositionFixTop = inifile.GetKeyValueInt("Setting", "FixTop", 0, true);
+            int bootPositionFixLeft = inifile.GetKeyValueInt("Setting", "FixLeft", 0, true);
 
             //起動時位置
-            this.StartPosition = FormStartPosition.Manual;
-            if (bootpos == 0)
+            StartPosition = FormStartPosition.Manual;
+            if (bootPosition == 0)
             {
                 //マウスカーソルの近く
-                this.マウスカーソルの近くToolStripMenuItem.Checked = true;
-                this.Location = bootLocation();
+                マウスカーソルの近くToolStripMenuItem.Checked = true;
+                Location = GetBootLocation();
             }
-            else if (bootpos == 1)
+            else if (bootPosition == 1)
             {
                 //マウスカーソルの位置
-                this.マウスカーソルの位置ToolStripMenuItem.Checked = true;
-                this.Location = new Point(Cursor.Position.X - this.Width / 2, Cursor.Position.Y - 14);
+                マウスカーソルの位置ToolStripMenuItem.Checked = true;
+                Location = new Point(Cursor.Position.X - Width / 2, Cursor.Position.Y - 14);
             }
-            else if (bootpos == 2)
+            else if (bootPosition == 2)
             {
                 //前回終了位置
-                this.前回終了位置ToolStripMenuItem.Checked = true;
-                this.Top = bootposTop;
-                this.Left = bootposLeft;
+                前回終了位置ToolStripMenuItem.Checked = true;
+                Top = bootPositionTop;
+                Left = bootPositionLeft;
             }
-            else if (bootpos == 3)
+            else if (bootPosition == 3)
             {
                 //固定
-                this.固定ToolStripMenuItem.Checked = true;
-                this.Top = bootposFixTop;
-                this.Left = bootposFixLeft;
+                固定ToolStripMenuItem.Checked = true;
+                Top = bootPositionFixTop;
+                Left = bootPositionFixLeft;
             }
 
             //マウスで移動させる
-            this.MouseDown += new MouseEventHandler(this.control_MouseDown);
-            this.MouseMove += new MouseEventHandler(this.control_MouseMove);
-            this.MouseUp += new MouseEventHandler(this.control_MouseUp);
-            this.label_relaypoint.MouseDown += new MouseEventHandler(this.control_MouseDown);
-            this.label_relaypoint.MouseMove += new MouseEventHandler(this.control_MouseMove);
-            this.label_relaypoint.MouseUp += new MouseEventHandler(this.control_MouseUp);
-            this.label_open.MouseDown += new MouseEventHandler(this.control_MouseDown);
-            this.label_open.MouseMove += new MouseEventHandler(this.control_MouseMove);
-            this.label_open.MouseUp += new MouseEventHandler(this.control_MouseUp);
-            this.pictureBox_setting.MouseDown += new MouseEventHandler(this.control_MouseDown);
-            this.pictureBox_setting.MouseMove += new MouseEventHandler(this.control_MouseMove);
-            this.pictureBox_setting.MouseUp += new MouseEventHandler(this.control_MouseUp);
+            MouseDown += (sender, e) => control_MouseDown(sender, e);
+            MouseMove += (sender, e) => control_MouseMove(sender, e);
+            MouseUp += (sender, e) => control_MouseUp(sender, e);
+
+            labelRelaypoint.MouseDown += (sender, e) => control_MouseDown(sender, e);
+            labelRelaypoint.MouseMove += (sender, e) => control_MouseMove(sender, e);
+            labelRelaypoint.MouseUp += (sender, e) => control_MouseUp(sender, e);
+
+            labelFolderOpen.MouseDown += (sender, e) => control_MouseDown(sender, e);
+            labelFolderOpen.MouseMove += (sender, e) => control_MouseMove(sender, e);
+            labelFolderOpen.MouseUp += (sender, e) => control_MouseUp(sender, e);
+
+            pictureBoxSetting.MouseDown += (sender, e) => control_MouseDown(sender, e);
+            pictureBoxSetting.MouseMove += (sender, e) => control_MouseMove(sender, e);
+            pictureBoxSetting.MouseUp += (sender, e) => control_MouseUp(sender, e);
 
             //Ctrl+Cイベント
-            this.KeyPreview = true;
-            this.KeyDown += new KeyEventHandler(this.form_KeyDown);
+            KeyPreview = true;
+            KeyDown += (sender, e) => form_KeyDown(sender, e);
 
             //ラベル
-            this.label_relaypoint.Font = new Font(SystemInformation.MenuFont.FontFamily, 10);
-            this.label_open.Font = SystemInformation.MenuFont;
-            this.label_open.MouseClick += new MouseEventHandler(this.open_MouseClick);
-            foreach (var control in this.Controls)
+            labelRelaypoint.Font = new Font(SystemInformation.MenuFont.FontFamily, 10);
+            labelFolderOpen.Font = SystemInformation.MenuFont;
+            labelFolderOpen.MouseClick += (sender, e) => open_MouseClick(sender, e);
+            foreach (var control in Controls)
             {
                 if (control.GetType() == typeof(Label))
                 {
                     ((Label)control).AllowDrop = true;
-                    ((Label)control).DragEnter += new DragEventHandler(this.control_DragEnter);
-                    ((Label)control).DragDrop += new DragEventHandler(this.control_DragDrop);
+                    ((Label)control).DragEnter += (sender, e) => control_DragEnter(sender, e);
+                    ((Label)control).DragDrop += (sender, e) => control_DragDrop(sender, e);
                 }
             }
 
             //設定ボタン
-            this.pictureBox_setting.BackgroundImage = Properties.Resources.setting.ToBitmap();
-            this.pictureBox_setting.BackgroundImageLayout = ImageLayout.Zoom;
-            this.pictureBox_setting.MouseClick += new MouseEventHandler(this.pictureBox_setting_MouseClick);
+            pictureBoxSetting.BackgroundImage = Properties.Resources.setting.ToBitmap();
+            pictureBoxSetting.BackgroundImageLayout = ImageLayout.Zoom;
+            pictureBoxSetting.MouseClick += (sender, e) => pictureBoxSetting_MouseClick(sender, e);
         }
 
         #region event(MouseDown/Move/Up)
 
         private Point lastMousePosition;
         private bool mouseCapture;
-        private bool click_ok = true;
+        private bool clickAction = true;
 
         private void control_MouseDown(object sender, MouseEventArgs e)
         {
-            click_ok = true;
+            clickAction = true;
 
-            if (sender is Label && ((Label)sender).Name == this.label_relaypoint.Name && files_RelayPoint.Count >= 1)
+            if (sender is Label && ((Label)sender).Name == labelRelaypoint.Name && fileLists.Count >= 1)
             {
                 //中継地点でありファイルが存在している場合
-                if (isExists(files_RelayPoint))
+                if (IsExists(fileLists))
                 {
                     try
                     {
-                        DataObject dataObj = new DataObject(DataFormats.FileDrop, files_RelayPoint.ToArray());
+                        DataObject dataObj = new DataObject(DataFormats.FileDrop, fileLists.ToArray());
                         DragDropEffects effect = DragDropEffects.None | DragDropEffects.Link | DragDropEffects.All;
                         ListView dummy = new ListView();
                         dummy.DoDragDrop(dataObj, effect);
@@ -150,7 +144,7 @@ namespace RelayPoint
                     }
                 }
 
-                if (!isMouseInWindow())
+                if (!IsMouseInWindow())
                 {
                     Application.Exit();
                 }
@@ -183,13 +177,13 @@ namespace RelayPoint
 
             if (System.Math.Abs(offsetX) > 5 || System.Math.Abs(offsetY) > 5)
             {
-                click_ok = false;
+                clickAction = false;
             }
 
             //差分移動
-            if (this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked)
+            if (タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked)
             {
-                this.Location = new Point(this.Left + offsetX, this.Top + offsetY);
+                Location = new Point(Left + offsetX, Top + offsetY);
             }
 
             lastMousePosition = mp;
@@ -197,7 +191,7 @@ namespace RelayPoint
 
         private void control_MouseUp(object sender, MouseEventArgs e)
         {
-            click_ok = true;
+            clickAction = true;
 
             if (e.Button != MouseButtons.Left)
             {
@@ -208,17 +202,16 @@ namespace RelayPoint
         }
 
         //マウスがウィンドウ内にいるか
-        private bool isMouseInWindow()
+        private bool IsMouseInWindow()
         {
-            Point mouse = this.PointToClient(Cursor.Position);
-            Point winRectLocation = this.PointToClient(this.Bounds.Location);
-            Rectangle winRect = new Rectangle(winRectLocation, this.Bounds.Size);
+            Point mouse = PointToClient(Cursor.Position);
+            Point winRectLocation = PointToClient(Bounds.Location);
 
-            if (this.ClientRectangle.Contains(mouse))
+            if (ClientRectangle.Contains(mouse))
             {
                 return true;
             }
-            else if (this.ClientRectangle.Contains(new Point(mouse.X, 0)) && winRectLocation.Y <= mouse.Y && mouse.Y <= 0)
+            else if (ClientRectangle.Contains(new Point(mouse.X, 0)) && winRectLocation.Y <= mouse.Y && mouse.Y <= 0)
             {
                 return true;
             }
@@ -246,56 +239,56 @@ namespace RelayPoint
         {
             if (sender is Label)
             {
-                if (((Label)sender).Name == this.label_relaypoint.Name)
+                if (((Label)sender).Name == labelRelaypoint.Name)
                 {
                     //ファイルパスを追加
-                    files_RelayPoint.AddRange((string[])e.Data.GetData(DataFormats.FileDrop, false));
+                    fileLists.AddRange((string[])e.Data.GetData(DataFormats.FileDrop, false));
 
                     //重複削除
-                    files_RelayPoint = files_RelayPoint.Distinct().ToList();
+                    fileLists = fileLists.Distinct().ToList();
 
                     //フォントサイズ変更
-                    label_relaypoint.Font = new Font(SystemInformation.MenuFont.FontFamily, 12);
+                    labelRelaypoint.Font = new Font(SystemInformation.MenuFont.FontFamily, 12);
 
                     //ファイルカウント
-                    int count_file = 0;
-                    int count_dir = 0;
+                    int fileCount = 0;
+                    int folderCount = 0;
 
-                    foreach (string file in files_RelayPoint)
+                    foreach (string file in fileLists)
                     {
                         if (File.Exists(file))
                         {
-                            count_file++;
+                            fileCount++;
                         }
                         else if (Directory.Exists(file))
                         {
-                            count_dir++;
+                            folderCount++;
                         }
                     }
 
-                    label_relaypoint.Text = "";
-                    if (count_file >= 1)
+                    labelRelaypoint.Text = "";
+                    if (fileCount >= 1)
                     {
-                        label_relaypoint.Text += count_file.ToString() + " file" + (count_file == 1 ? "" : "s");
+                        labelRelaypoint.Text += fileCount.ToString() + " file" + (fileCount == 1 ? "" : "s");
                     }
 
-                    if (count_dir >= 1)
+                    if (folderCount >= 1)
                     {
-                        if (count_file >= 1)
+                        if (fileCount >= 1)
                         {
-                            label_relaypoint.Text += System.Environment.NewLine;
+                            labelRelaypoint.Text += System.Environment.NewLine;
                         }
 
-                        label_relaypoint.Text += count_dir.ToString() + " folder" + (count_dir == 1 ? "" : "s");
+                        labelRelaypoint.Text += folderCount.ToString() + " folder" + (folderCount == 1 ? "" : "s");
                     }
 
                     //ツールチップ変更
-                    if (this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked)
+                    if (ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked)
                     {
-                        this.toolTip1.SetToolTip(this.label_relaypoint, string.Join(System.Environment.NewLine, files_RelayPoint.ToArray()));
+                        toolTip1.SetToolTip(labelRelaypoint, string.Join(System.Environment.NewLine, fileLists.ToArray()));
                     }
                 }
-                else if (((Label)sender).Name == this.label_open.Name)
+                else if (((Label)sender).Name == labelFolderOpen.Name)
                 {
                     //ファイルパス確保
                     List<string> dropfiles = new List<string>();
@@ -304,14 +297,14 @@ namespace RelayPoint
                     //重複削除
                     foreach (string file in dropfiles)
                     {
-                        if (Directory.Exists(file) && !folders.Contains(file))
+                        if (Directory.Exists(file) && !folderLists.Contains(file))
                         {
-                            folders.Add(file);
+                            folderLists.Add(file);
                         }
                     }
 
                     //フォルダリスト更新
-                    TextFile.Write(folder_ini, string.Join(System.Environment.NewLine, folders), false, EncodeLib.UTF8);
+                    TextFile.Write(folderIniFile, string.Join(System.Environment.NewLine, folderLists), false, EncodeLib.UTF8);
                 }
             }
         }
@@ -328,43 +321,41 @@ namespace RelayPoint
                 return;
             }
 
-            if (click_ok)
+            if (clickAction)
             {
                 //メニュー作成
-                ContextMenuStrip cmenu = makeContextMenuStrip(this.ToolStripMenuItem_folderopen, true);
+                ContextMenuStrip contextMenuStrip = makeContextMenuStrip(true);
 
                 //メニュー表示
-                Point p = this.label_open.PointToScreen(new Point(0, this.label_open.Height));
-                cmenu.Show(p);
+                Point p = labelFolderOpen.PointToScreen(new Point(0, labelFolderOpen.Height));
+                contextMenuStrip.Show(p);
             }
         }
 
         //メニュー作成
-        private ContextMenuStrip makeContextMenuStrip(System.Action<object, System.EventArgs> func, bool edit = false)
+        private ContextMenuStrip makeContextMenuStrip(bool edit = false)
         {
-            ContextMenuStrip cmenu = new ContextMenuStrip();
+            ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
 
             if (edit)
             {
-                ToolStripMenuItem item1 = new ToolStripMenuItem();
-                item1.Text = "ダイアログで選択する";
-                item1.Click += new System.EventHandler(func);
-                cmenu.Items.Add(item1);
+                ToolStripMenuItem item1 = new ToolStripMenuItem { Text = "ダイアログで選択する" };
+                item1.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+                contextMenuStrip.Items.Add(item1);
             }
 
-            ToolStripMenuItem item2 = new ToolStripMenuItem();
-            item2.Text = "デスクトップ";
-            item2.Click += new System.EventHandler(func);
-            cmenu.Items.Add(item2);
+            ToolStripMenuItem item2 = new ToolStripMenuItem { Text = "デスクトップ" };
+            item2.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+            contextMenuStrip.Items.Add(item2);
 
-            bool full = this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked;
-            if (folders.Count > 0)
+            bool isFullpathDisplayed = フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked;
+            if (folderLists.Count > 0)
             {
                 ToolStripSeparator sep1 = new ToolStripSeparator();
-                cmenu.Items.Add(sep1);
+                contextMenuStrip.Items.Add(sep1);
 
                 int idx = -1;
-                foreach (string folder in folders)
+                foreach (string folder in folderLists)
                 {
                     idx++;
                     ToolStripMenuItem item = new ToolStripMenuItem();
@@ -373,11 +364,11 @@ namespace RelayPoint
                     string text = folder;
                     try
                     {
-                        if (!full)
+                        if (!isFullpathDisplayed)
                         {
                             int idx2 = -1;
                             text = Path.GetFileName(folder);
-                            foreach (string otherfolder in folders)
+                            foreach (string otherfolder in folderLists)
                             {
                                 idx2++;
                                 if (idx != idx2)
@@ -398,33 +389,31 @@ namespace RelayPoint
 
                     item.Text = text;
                     item.Name = "folder" + idx.ToString("D");
-                    item.Click += new System.EventHandler(func);
+                    item.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
                     item.Enabled = Directory.Exists(folder);
-                    cmenu.Items.Add(item);
+                    contextMenuStrip.Items.Add(item);
                 }
             }
 
             ToolStripSeparator sep2 = new ToolStripSeparator();
-            cmenu.Items.Add(sep2);
+            contextMenuStrip.Items.Add(sep2);
 
             if (edit)
             {
-                ToolStripMenuItem item3 = new ToolStripMenuItem();
-                item3.Text = "編集";
-                item3.Click += new System.EventHandler(func);
-                cmenu.Items.Add(item3);
+                ToolStripMenuItem item3 = new ToolStripMenuItem { Text = "編集" };
+                item3.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+                contextMenuStrip.Items.Add(item3);
             }
 
-            ToolStripMenuItem item4 = new ToolStripMenuItem();
-            item4.Text = "キャンセル";
-            item4.Click += new System.EventHandler(func);
-            cmenu.Items.Add(item4);
+            ToolStripMenuItem item4 = new ToolStripMenuItem { Text = "キャンセル" };
+            item4.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+            contextMenuStrip.Items.Add(item4);
 
-            return cmenu;
+            return contextMenuStrip;
         }
 
         //メニュー選択時
-        private void ToolStripMenuItem_folderopen(object sender, System.EventArgs e)
+        private void ToolStripMenuItem_FolderOpen(object sender, System.EventArgs e)
         {
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
 
@@ -436,41 +425,41 @@ namespace RelayPoint
             }
             else if (item.Text == "編集")
             {
-                if (!File.Exists(folder_ini))
+                if (!File.Exists(folderIniFile))
                 {
-                    TextFile.Write(folder_ini, "", false, EncodeLib.UTF8);
+                    TextFile.Write(folderIniFile, "", false, EncodeLib.UTF8);
                 }
 
-                if (File.Exists(folder_ini))
+                if (File.Exists(folderIniFile))
                 {
-                    bool file_ok = true;
+                    bool fileAccessOk = true;
 
                     //更新日時確認
                     System.DateTime dt1 = System.DateTime.Now;
                     System.DateTime dt2 = System.DateTime.Now;
                     try
                     {
-                        dt1 = File.GetLastWriteTime(folder_ini);
+                        dt1 = File.GetLastWriteTime(folderIniFile);
                     }
                     catch (System.Exception)
                     {
-                        file_ok = false;
+                        fileAccessOk = false;
                     }
 
-                    System.Diagnostics.Process p = System.Diagnostics.Process.Start(folder_ini);
+                    System.Diagnostics.Process p = System.Diagnostics.Process.Start(folderIniFile);
                     p.WaitForExit();
 
                     //編集後の更新日時確認
                     try
                     {
-                        dt2 = File.GetLastWriteTime(folder_ini);
+                        dt2 = File.GetLastWriteTime(folderIniFile);
                     }
                     catch (System.Exception)
                     {
-                        file_ok = false;
+                        fileAccessOk = false;
                     }
 
-                    if (file_ok)
+                    if (fileAccessOk)
                     {
                         System.TimeSpan ts1 = dt1 - dt2;
 
@@ -479,7 +468,7 @@ namespace RelayPoint
                         {
                             try
                             {
-                                read_folder_ini();
+                                ReadFoloderIni();
                             }
                             catch (System.Exception)
                             {
@@ -501,9 +490,9 @@ namespace RelayPoint
                 {
                     string str = item.Name.Substring("folder".Length);
                     int idx = int.Parse(str);
-                    if (Directory.Exists(folders[idx]))
+                    if (Directory.Exists(folderLists[idx]))
                     {
-                        folder = folders[idx];
+                        folder = folderLists[idx];
                     }
                 }
                 catch (System.Exception)
@@ -536,16 +525,16 @@ namespace RelayPoint
         {
             if (e.KeyData == (Keys.Control | Keys.C))
             {
-                if (files_RelayPoint.Count >= 1)
+                if (fileLists.Count >= 1)
                 {
-                    copy_to_clipboard(files_RelayPoint);
+                    CopyToClipboard(fileLists);
                 }
             }
         }
 
-        private void copy_to_clipboard(List<string> files)
+        private void CopyToClipboard(List<string> files)
         {
-            if (isExists(files))
+            if (IsExists(files))
             {
                 try
                 {
@@ -562,7 +551,7 @@ namespace RelayPoint
         }
 
         //ファイルの存在確認
-        private bool isExists(List<string> checkfiles)
+        private bool IsExists(List<string> checkfiles)
         {
             if (checkfiles.Count == 0)
             {
@@ -586,11 +575,11 @@ namespace RelayPoint
 
         #region 起動位置
 
-        private Point bootLocation()
+        private Point GetBootLocation()
         {
             int x, y;
-            x = Cursor.Position.X - this.Width / 2;
-            y = Cursor.Position.Y - this.Height / 2;
+            x = Cursor.Position.X - Width / 2;
+            y = Cursor.Position.Y - Height / 2;
 
             Rectangle workarea = Screen.GetWorkingArea(this);
             Rectangle display = Screen.GetBounds(this);
@@ -602,9 +591,9 @@ namespace RelayPoint
                 if (workarea.Top == 0)
                 {
                     //bottom
-                    if (y >= workarea.Height - this.Height)
+                    if (y >= workarea.Height - Height)
                     {
-                        y = workarea.Height - this.Height;
+                        y = workarea.Height - Height;
                         correction = true;
                     }
                 }
@@ -623,9 +612,9 @@ namespace RelayPoint
                 if (workarea.Left == 0)
                 {
                     //right
-                    if (x >= workarea.Width - this.Width)
+                    if (x >= workarea.Width - Width)
                     {
-                        x = workarea.Width - this.Width;
+                        x = workarea.Width - Width;
                         correction = true;
                     }
                 }
@@ -651,9 +640,9 @@ namespace RelayPoint
                 x = 0;
             }
 
-            if (x >= display.Width - this.Width)
+            if (x >= display.Width - Width)
             {
-                x = display.Width - this.Width;
+                x = display.Width - Width;
             }
 
             if (y <= 0)
@@ -661,9 +650,9 @@ namespace RelayPoint
                 y = 0;
             }
 
-            if (y >= display.Height - this.Height)
+            if (y >= display.Height - Height)
             {
-                y = display.Height - this.Height;
+                y = display.Height - Height;
             }
 
             return new Point(x, y);
@@ -673,11 +662,11 @@ namespace RelayPoint
 
         #region 設定
 
-        private void read_folder_ini()
+        private void ReadFoloderIni()
         {
-            folders = new List<string>();
+            folderLists = new List<string>();
 
-            string readall = TextFile.Read(folder_ini);
+            string readall = TextFile.Read(folderIniFile) ?? string.Empty;
             foreach (string str in readall.Replace(System.Environment.NewLine, "\n").Split('\n'))
             {
                 string folder = str;
@@ -688,16 +677,16 @@ namespace RelayPoint
 
                 folder.Trim();
 
-                if (!folders.Contains(folder) && folder != "")
+                if (!folderLists.Contains(folder) && folder != "")
                 {
-                    folders.Add(folder);
+                    folderLists.Add(folder);
                 }
             }
-            TextFile.Write(folder_ini, string.Join(System.Environment.NewLine, folders), false, EncodeLib.UTF8);
+            TextFile.Write(folderIniFile, string.Join(System.Environment.NewLine, folderLists), false, EncodeLib.UTF8);
         }
 
         //設定
-        private void pictureBox_setting_MouseClick(object sender, MouseEventArgs e)
+        private void pictureBoxSetting_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left)
             {
@@ -705,49 +694,49 @@ namespace RelayPoint
             }
 
             //メニュー表示
-            if (click_ok)
+            if (clickAction)
             {
-                Point p = this.pictureBox_setting.PointToScreen(new Point(0, this.pictureBox_setting.Height));
-                this.contextMenuStrip1.Show(p);
+                Point p = pictureBoxSetting.PointToScreen(new Point(0, pictureBoxSetting.Height));
+                contextMenuStrip1.Show(p);
             }
         }
 
         private void タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked = !this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked;
-            inifile.SetKeyValueBool("Setting", "mousemove", this.タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked);
+            タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked = !タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked;
+            inifile.SetKeyValueBool("Setting", "mousemove", タイトルバー以外でもマウスによるウィンドウ移動を許可ToolStripMenuItem.Checked);
         }
 
         private void フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked = !this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked;
-            inifile.SetKeyValueBool("Setting", "fullpath", this.フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked);
+            フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked = !フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked;
+            inifile.SetKeyValueBool("Setting", "fullpath", フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked);
         }
 
-        private void BootPosToolStripMenuItem_Click(object sender, System.EventArgs e)
+        private void bootPositionToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            this.マウスカーソルの位置ToolStripMenuItem.Checked = false;
-            this.マウスカーソルの近くToolStripMenuItem.Checked = false;
-            this.前回終了位置ToolStripMenuItem.Checked = false;
-            this.固定ToolStripMenuItem.Checked = false;
+            マウスカーソルの位置ToolStripMenuItem.Checked = false;
+            マウスカーソルの近くToolStripMenuItem.Checked = false;
+            前回終了位置ToolStripMenuItem.Checked = false;
+            固定ToolStripMenuItem.Checked = false;
 
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
             item.Checked = true;
 
             int idx = 0;
-            if (this.マウスカーソルの近くToolStripMenuItem.Checked)
+            if (マウスカーソルの近くToolStripMenuItem.Checked)
             {
                 idx = 0;
             }
-            if (this.マウスカーソルの位置ToolStripMenuItem.Checked)
+            if (マウスカーソルの位置ToolStripMenuItem.Checked)
             {
                 idx = 1;
             }
-            if (this.前回終了位置ToolStripMenuItem.Checked)
+            if (前回終了位置ToolStripMenuItem.Checked)
             {
                 idx = 2;
             }
-            if (this.固定ToolStripMenuItem.Checked)
+            if (固定ToolStripMenuItem.Checked)
             {
                 idx = 3;
                 inifile.SetKeyValueInt("Setting", "FixTop", Top);
@@ -768,22 +757,21 @@ namespace RelayPoint
 
         private void ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked = !this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked;
-            inifile.SetKeyValueBool("Setting", "tooltip", this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked);
+            ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked = !ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked;
+            inifile.SetKeyValueBool("Setting", "tooltip", ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked);
 
-            if (this.ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked)
+            if (ドロップされたファイルのリストをツールチップで表示ToolStripMenuItem.Checked)
             {
-                if (files_RelayPoint.Count > 0)
+                if (fileLists.Count > 0)
                 {
-                    this.toolTip1.SetToolTip(this.label_relaypoint, string.Join(System.Environment.NewLine, files_RelayPoint.ToArray()));
+                    toolTip1.SetToolTip(labelRelaypoint, string.Join(System.Environment.NewLine, fileLists.ToArray()));
                 }
             }
             else
             {
-                this.toolTip1.SetToolTip(this.label_relaypoint, "");
+                toolTip1.SetToolTip(labelRelaypoint, "");
             }
         }
         #endregion
-
     }
 }
