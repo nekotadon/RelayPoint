@@ -144,7 +144,7 @@ namespace RelayPoint
                     }
                 }
 
-                if (!IsMouseInWindow())
+                if (!IsMouseInWindow)
                 {
                     Application.Exit();
                 }
@@ -202,24 +202,7 @@ namespace RelayPoint
         }
 
         //マウスがウィンドウ内にいるか
-        private bool IsMouseInWindow()
-        {
-            Point mouse = PointToClient(Cursor.Position);
-            Point winRectLocation = PointToClient(Bounds.Location);
-
-            if (ClientRectangle.Contains(mouse))
-            {
-                return true;
-            }
-            else if (ClientRectangle.Contains(new Point(mouse.X, 0)) && winRectLocation.Y <= mouse.Y && mouse.Y <= 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        private bool IsMouseInWindow => Bounds.Contains(Cursor.Position);
 
         #endregion
 
