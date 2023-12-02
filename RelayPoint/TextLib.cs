@@ -1,4 +1,4 @@
-﻿//2023.11.11-01
+﻿//2023.12.02
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -94,7 +94,7 @@ namespace TextLib
         {
             string value = GetKeyValue(sectionName, keyName);
 
-            //存在しない場合はデフォルト値を書き込み
+            //存在しない場合
             if (value == null && save)
             {
                 SetKeyValueString(sectionName, keyName, "");
@@ -115,7 +115,7 @@ namespace TextLib
         {
             string value = GetKeyValue(sectionName, keyName);
 
-            //存在しない場合はデフォルト値を書き込み
+            //存在しない場合
             if (value != null && value != "")
             {
                 return value;
@@ -426,18 +426,7 @@ namespace TextLib
             }
 
             //指定のセクション名のセクションを返す
-            public Section GetSection(string sectionName)
-            {
-                foreach (var section in Sections)
-                {
-                    if (section.Name == sectionName)
-                    {
-                        return section;
-                    }
-                }
-
-                return null;
-            }
+            public Section GetSection(string sectionName) => Sections.Find(section => section.Name == sectionName);
 
             //全項目設定文字列を返す
             public string ToStr()
@@ -478,19 +467,7 @@ namespace TextLib
             }
 
             //指定のキー名のキーを返す
-            public Key GetKey(string keyName)
-            {
-                foreach (var key in Keys)
-                {
-                    if (key.Name == keyName)
-                    {
-                        return key;
-                    }
-                }
-
-                return null;
-            }
-
+            public Key GetKey(string keyName) => Keys.Find(key => key.Name == keyName);
         }
 
         //キー
