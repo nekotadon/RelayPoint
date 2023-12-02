@@ -17,6 +17,9 @@ namespace TextLib
         public static string BaseIniFile => DirectoryYen + FileNameWithoutExtension + ".ini";
     }
 
+    /// <summary>
+    /// iniファイル読み書き用クラス
+    /// </summary>
     public class IniFile
     {
         //iniファイルパス
@@ -29,7 +32,7 @@ namespace TextLib
         private Items _items = new Items();
 
         /// <summary>
-        /// iniファイル読み書き用クラス。App.exeの場合App.iniをiniファイルとします。Encodingは自動で判定します。
+        /// iniファイルの初期化。App.exeの場合App.iniをiniファイルとします。Encodingは自動で判定します。
         /// </summary>
         public IniFile()
         {
@@ -38,7 +41,7 @@ namespace TextLib
         }
 
         /// <summary>
-        /// iniファイル読み書き用クラス。iniファイルの絶対パスを指定します。Encodingは自動で判定します。
+        /// iniファイルの初期化。iniファイルの絶対パスを指定します。Encodingは自動で判定します。
         /// </summary>
         /// <param name="filepath">iniファイルの絶対パス</param>
         public IniFile(string filepath)
@@ -48,7 +51,7 @@ namespace TextLib
         }
 
         /// <summary>
-        /// iniファイル読み書き用クラス。iniファイルの絶対パスとEncodingを指定します。
+        /// iniファイルの初期化。iniファイルの絶対パスとEncodingを指定します。
         /// </summary>
         /// <param name="filepath">iniファイルの絶対パス</param>
         /// <param name="encoding">iniファイルの文字コード</param>
@@ -59,7 +62,7 @@ namespace TextLib
         }
 
         /// <summary>
-        /// iniファイル読み書き用クラス。iniファイルのEncodingを指定します。iniファイルはApp.exeの場合App.iniとします。
+        /// iniファイルの初期化。iniファイルのEncodingを指定します。iniファイルはApp.exeの場合App.iniとします。
         /// </summary>
         /// <param name="encoding">iniファイルの文字コード</param>
         public IniFile(Encoding encoding)
@@ -582,8 +585,6 @@ namespace TextLib
         }
     }
 
-    #region TextFile
-
     public class TextFile
     {
         /// <summary>
@@ -680,10 +681,6 @@ namespace TextLib
             return allText;
         }
     }
-
-    #endregion
-
-    #region EncodeLib
 
     public static class EncodeLib
     {
@@ -1129,6 +1126,4 @@ namespace TextLib
             }
         }
     }
-
-    #endregion
 }
