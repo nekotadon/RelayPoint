@@ -86,44 +86,44 @@ namespace RelayPoint
             }
 
             //マウスで移動させる
-            MouseDown += (sender, e) => control_MouseDown(sender, e);
-            MouseMove += (sender, e) => control_MouseMove(sender, e);
-            MouseUp += (sender, e) => control_MouseUp(sender, e);
+            MouseDown += control_MouseDown;
+            MouseMove += control_MouseMove;
+            MouseUp += control_MouseUp;
 
-            labelRelaypoint.MouseDown += (sender, e) => control_MouseDown(sender, e);
-            labelRelaypoint.MouseMove += (sender, e) => control_MouseMove(sender, e);
-            labelRelaypoint.MouseUp += (sender, e) => control_MouseUp(sender, e);
+            labelRelaypoint.MouseDown += control_MouseDown;
+            labelRelaypoint.MouseMove += control_MouseMove;
+            labelRelaypoint.MouseUp += control_MouseUp;
 
-            labelFolderOpen.MouseDown += (sender, e) => control_MouseDown(sender, e);
-            labelFolderOpen.MouseMove += (sender, e) => control_MouseMove(sender, e);
-            labelFolderOpen.MouseUp += (sender, e) => control_MouseUp(sender, e);
+            labelFolderOpen.MouseDown += control_MouseDown;
+            labelFolderOpen.MouseMove += control_MouseMove;
+            labelFolderOpen.MouseUp += control_MouseUp;
 
-            pictureBoxSetting.MouseDown += (sender, e) => control_MouseDown(sender, e);
-            pictureBoxSetting.MouseMove += (sender, e) => control_MouseMove(sender, e);
-            pictureBoxSetting.MouseUp += (sender, e) => control_MouseUp(sender, e);
+            pictureBoxSetting.MouseDown += control_MouseDown;
+            pictureBoxSetting.MouseMove += control_MouseMove;
+            pictureBoxSetting.MouseUp += control_MouseUp;
 
             //Ctrl+Cイベント
             KeyPreview = true;
-            KeyDown += (sender, e) => form_KeyDown(sender, e);
+            KeyDown += form_KeyDown;
 
             //ラベル
             labelRelaypoint.Font = new Font(SystemInformation.MenuFont.FontFamily, 10);
             labelFolderOpen.Font = SystemInformation.MenuFont;
-            labelFolderOpen.MouseClick += (sender, e) => open_MouseClick(sender, e);
+            labelFolderOpen.MouseClick += open_MouseClick;
             foreach (var control in Controls)
             {
                 if (control.GetType() == typeof(Label))
                 {
                     ((Label)control).AllowDrop = true;
-                    ((Label)control).DragEnter += (sender, e) => control_DragEnter(sender, e);
-                    ((Label)control).DragDrop += (sender, e) => control_DragDrop(sender, e);
+                    ((Label)control).DragEnter += control_DragEnter;
+                    ((Label)control).DragDrop += control_DragDrop;
                 }
             }
 
             //設定ボタン
             pictureBoxSetting.BackgroundImage = Properties.Resources.setting.ToBitmap();
             pictureBoxSetting.BackgroundImageLayout = ImageLayout.Zoom;
-            pictureBoxSetting.MouseClick += (sender, e) => pictureBoxSetting_MouseClick(sender, e);
+            pictureBoxSetting.MouseClick += pictureBoxSetting_MouseClick;
         }
 
         #region event(MouseDown/Move/Up)
@@ -333,12 +333,12 @@ namespace RelayPoint
             if (edit)
             {
                 ToolStripMenuItem item1 = new ToolStripMenuItem { Text = "ダイアログで選択する" };
-                item1.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+                item1.Click += ToolStripMenuItem_FolderOpen;
                 contextMenuStrip.Items.Add(item1);
             }
 
             ToolStripMenuItem item2 = new ToolStripMenuItem { Text = "デスクトップ" };
-            item2.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+            item2.Click += ToolStripMenuItem_FolderOpen;
             contextMenuStrip.Items.Add(item2);
 
             bool isFullpathDisplayed = フォルダを開くメニューでフォルダのフルパスを表示ToolStripMenuItem.Checked;
@@ -382,7 +382,7 @@ namespace RelayPoint
 
                     item.Text = text;
                     item.Name = "folder" + idx.ToString("D");
-                    item.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+                    item.Click += ToolStripMenuItem_FolderOpen;
                     item.Enabled = Directory.Exists(folder);
                     contextMenuStrip.Items.Add(item);
                 }
@@ -394,12 +394,12 @@ namespace RelayPoint
             if (edit)
             {
                 ToolStripMenuItem item3 = new ToolStripMenuItem { Text = "編集" };
-                item3.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+                item3.Click += ToolStripMenuItem_FolderOpen;
                 contextMenuStrip.Items.Add(item3);
             }
 
             ToolStripMenuItem item4 = new ToolStripMenuItem { Text = "キャンセル" };
-            item4.Click += (sender, e) => ToolStripMenuItem_FolderOpen(sender, e);
+            item4.Click += ToolStripMenuItem_FolderOpen;
             contextMenuStrip.Items.Add(item4);
 
             return contextMenuStrip;
