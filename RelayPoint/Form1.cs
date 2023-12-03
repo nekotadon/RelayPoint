@@ -18,6 +18,16 @@ namespace RelayPoint
         //設定ファイル
         IniFile inifile = new IniFile();
 
+        public static class AppInfo
+        {
+            public static string Filepath => System.Reflection.Assembly.GetExecutingAssembly().Location;
+            public static string Directory => Path.GetDirectoryName(Filepath);
+            public static string DirectoryYen => Path.GetDirectoryName(Filepath) + @"\";
+            public static string FileName => Path.GetFileName(Filepath);
+            public static string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(Filepath);
+            public static string Extension => Path.GetExtension(Filepath).ToLower();
+        }
+
         public Form1()
         {
             InitializeComponent();
